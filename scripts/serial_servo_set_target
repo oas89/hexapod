@@ -1,0 +1,18 @@
+# !/bin/bash
+# Usage: ./serial_servo_set_target.sh DEVICE CHANNEL TARGET
+DEVICE=$1
+CHANNEL=$2
+TARGET=$3
+
+byte() {
+  printf "\\x$(printf "%x" $1)"
+}
+
+stty raw -F $DEVICE
+
+{
+  byte 0x84
+  byte $CHANNEL
+  byte $((TARGET & 0x7F))
+  byte $((TARGET >> 7 & 0x7F))
+} > $DEVICE
